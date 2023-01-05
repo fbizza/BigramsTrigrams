@@ -8,6 +8,7 @@ using namespace std;
 
 
 int clean_txt() {
+    // This function removes punctuation and transforms every character to lowercase
     string filename = "../input.txt";
     ifstream input(filename);
     if (!input.is_open()) {
@@ -28,7 +29,7 @@ int clean_txt() {
             }
         }
         if (!clean_word.empty()) {
-            output << clean_word << endl;
+            output << clean_word << " ";
         }
     }
     input.close();

@@ -5,31 +5,55 @@
 #include "Sequential.h"
 
 
-void Sequential::build_bigram_histogram(const string& filename) {
-    unordered_map<std::string, int> histogram;
+void Sequential::compute_words_ngrams(const string& filename) {
+    int n = this->ngram_length;
+    unordered_map<string, int> histogram;
 
     ifstream file(filename);
     if (!file) {
-        std::cerr << "Error opening file: " << filename << std::endl;
+        cout << "Error opening input txt file" << endl;
         return;
     }
 
-    string prev_word;
+    vector<string> previous_words(n - 1);
+    int num_words = 0;  // for handling the first words of the txt file
     string word;
     while (file >> word) {
-        if (!prev_word.empty()) {
-            string bigram = prev_word + " " + word;
-
-            // If we increment an element of an unordered_map that does not exist in the map,
-            // the map will insert a new element with the key and a default-constructed value,
-            // then increment it
-            histogram[bigram]++;
+        if (num_words >= n - 1) {
+            string ngram = "";
+            for (int i = 0; i < n - 1; i++) {
+                ngram += previous_words[i] + " ";
+            }
+            ngram += word;
+            histogram[ngram]++;
         }
-        prev_word = word;
+        for (int i = 0; i < n - 2; i++) {
+            previous_words[i] = previous_words[i + 1];
+        }
+        previous_words[n - 2] = word;
+        num_words++;
     }
 
-    for (const auto& [bigram, count] : histogram) {
-        std::cout << bigram << ": " << count << std::endl;
+
+//    // to print the whole histogram
+//    for (const auto& [ngram, count] : histogram) {
+//        cout << ngram << ": " << count << endl;
+//    }
+
+
+    // to print the most common ngrams
+    priority_queue<pair<int, string>> q;
+    for (auto& [ngram, count] : histogram) {
+        q.push({count, ngram});
     }
 
+    for (int i = 0; i < 3; i++) {
+        auto [count, ngram] = q.top();
+        q.pop();
+        std::cout << ngram << ": " << count << std::endl;
+    }
 }
+
+
+
+

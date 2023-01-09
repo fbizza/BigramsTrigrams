@@ -1,11 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <fstream>
 #include <cctype>
 #include <unordered_map>
 #include <chrono>
-
+#include "Sequential.h"
 using namespace std;
 
 
@@ -36,52 +35,24 @@ int clean_txt() {
     }
     input.close();
     output.close();
+    return 0;
 }
 
-vector<string> extract_bigrams(const string& str) {
-    vector<string> bigrams;
-    for (int i = 0; i < str.size() - 1; i++) {
-        bigrams.push_back(str.substr(i, 2));
-    }
-    return bigrams;
-}
+//vector<string> extract_bigrams(const string& str) {
+//    vector<string> bigrams;
+//    for (int i = 0; i < str.size() - 1; i++) {
+//        bigrams.push_back(str.substr(i, 2));
+//    }
+//    return bigrams;
+//}
 
 
-void build_bigram_histogram(const string& filename) {
-
+void build_ngram_histogram_vector(int n, const string& filename) {
     unordered_map<std::string, int> histogram;
 
     ifstream file(filename);
     if (!file) {
-        std::cerr << "Error opening file: " << filename << std::endl;
-        return;
-    }
-
-    string prev_word;
-    string word;
-    while (file >> word) {
-        if (!prev_word.empty()) {
-            string bigram = prev_word + " " + word;
-
-            // If we increment an element of an unordered_map that does not exist in the map,
-            // the map will insert a new element with the key and a default-constructed value,
-            // then increment it
-            histogram[bigram]++;
-        }
-        prev_word = word;
-    }
-
-    for (const auto& [bigram, count] : histogram) {
-        std::cout << bigram << ": " << count << std::endl;
-    }
-}
-
-void build_bigram_histogram_from_vector(const string& filename) {
-    unordered_map<std::string, int> histogram;
-
-    ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error opening file: " << filename << std::endl;
+        cout << "Error opening file: " << endl;
         return;
     }
 
@@ -91,31 +62,49 @@ void build_bigram_histogram_from_vector(const string& filename) {
         words.push_back(word);
     }
 
-    for (int i = 1; i < words.size(); i++) {
-        string bigram = words[i - 1] + " " + words[i];
+    for (int i = n - 1; i < words.size(); i++) {
+        string ngram = "";
+        for (int j = i - n + 1; j <= i; j++) {
+            ngram += words[j] + " ";
+        }
+        ngram.pop_back();
 
         // If we increment an element of an unordered_map that does not exist in the map,
         // the map will insert a new element with the key and a default-constructed value,
         // then increment it
-        histogram[bigram]++;
+        histogram[ngram]++;
     }
 
-    for (const auto& [bigram, count] : histogram) {
-        std::cout << bigram << ": " << count << std::endl;
+    // to print the most common ngrams
+    priority_queue<pair<int, string>> q;
+    for (auto& [ngram, count] : histogram) {
+        q.push({count, ngram});
+    }
+
+    for (int i = 0; i < 3; i++) {
+        auto [count, ngram] = q.top();
+        q.pop();
+        cout << ngram << ": " << count << endl;
     }
 }
+
 int main()
 {
-    clean_txt();
+    // clean_txt();
+    Sequential s(3);
+
     auto begin = chrono::high_resolution_clock::now();
-    build_bigram_histogram("../clean_input.txt");
+    s.compute_words_ngrams("../clean_input.txt");
     auto end = chrono::high_resolution_clock::now();
     auto elapsed = chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
     printf("Time measured for normal version: %.3f seconds.\n", elapsed.count() * 1e-9);
 
     auto begin2 = chrono::high_resolution_clock::now();
-    build_bigram_histogram_from_vector("../clean_input.txt");
+    build_ngram_histogram_vector(3, "../clean_input.txt");
     auto end2 = chrono::high_resolution_clock::now();
     auto elapsed2 = chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2);
     printf("Time measured for vectorized version: %.3f seconds.\n", elapsed2.count() * 1e-9);
+
+
+
 }

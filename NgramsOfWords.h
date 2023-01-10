@@ -1,5 +1,5 @@
-#ifndef BIGRAMSTRIGRAMS_SEQUENTIAL_H
-#define BIGRAMSTRIGRAMS_SEQUENTIAL_H
+#ifndef BIGRAMSTRIGRAMS_NGRAMSOFWORDS_H
+#define BIGRAMSTRIGRAMS_NGRAMSOFWORDS_H
 
 #include <string>
 #include <iostream>
@@ -11,13 +11,14 @@
 
 using namespace std;
 
-class Sequential {
+class NgramsOfWords {
 public:
-    Sequential(int n) {
+    NgramsOfWords(int n) {
         ngram_length = n;
     };
 
     void compute_words_ngrams(const string& filename);
+    void parallel_compute_words_ngrams(const string& filename);
 
 private:
     int ngram_length;
@@ -25,4 +26,4 @@ private:
 };
 
 
-#endif //BIGRAMSTRIGRAMS_SEQUENTIAL_H
+#endif //BIGRAMSTRIGRAMS_NGRAMSOFWORDS_H

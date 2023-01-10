@@ -1,11 +1,25 @@
-//
-// Created by bizza on 05/01/2023.
-//
-
 #include "NgramsOfWords.h"
 
+void print_histogram(unordered_map<string, int> histogram) {
+    string ngram;
+    int count;
 
-void NgramsOfWords::compute_words_ngrams(const string& filename) {
+    //sort the histogram
+    priority_queue<pair<int, string>> q;
+    for (auto&[ngram, count]: histogram) {
+        q.push({count, ngram});
+    }
+
+    // prinit the most common ngrams
+    for (int i = 0; i < 3; i++) {
+        auto[count, ngram] = q.top();
+        q.pop();
+        cout << ngram << ": " << count << endl;
+    }
+}
+
+
+void NgramsOfWords::compute_words_ngrams(const string &filename) {
 
     cout << "Computing ngrams..." << endl;
     int n = this->ngram_length;
@@ -17,7 +31,7 @@ void NgramsOfWords::compute_words_ngrams(const string& filename) {
         return;
     }
 
-    vector<string> previous_words(n-1);
+    vector<string> previous_words(n - 1);
     int num_words = 0;
     string word;
     while (file >> word) {   // control for handling the first words of the txt file
@@ -36,18 +50,7 @@ void NgramsOfWords::compute_words_ngrams(const string& filename) {
         num_words++;
     }
 
-    // sort the histogram
-    priority_queue<pair<int, string>> q;
-    for (auto& [ngram, count] : histogram) {
-        q.push({count, ngram});
-    }
-
-    // print the most common ngrams
-    for (int i = 0; i < 3; i++) {
-        auto [count, ngram] = q.top();
-        q.pop();
-        cout << ngram << ": " << count << endl;
-    }
+    print_histogram(histogram);
 }
 
 
@@ -75,8 +78,10 @@ void NgramsOfWords::parallel_compute_words_ngrams(const string &filename) {
 
 #pragma omp parallel
     {
+
         unordered_map<string, int> thread_histogram;
-#pragma omp for
+
+#pragma omp for nowait
         for (int i = n - 1; i < size; i++) {
             string ngram = "";
             for (int j = i - n + 1; j < i + 1; j++) {
@@ -87,22 +92,11 @@ void NgramsOfWords::parallel_compute_words_ngrams(const string &filename) {
         }
 
 #pragma omp critical
-        for (auto& [ngram, count] : thread_histogram) {
+        for (auto&[ngram, count]: thread_histogram) {
             global_histogram[ngram] += count;
         }
     }
 
-    // sort the histogram
-    priority_queue<pair<int, string>> q;
-    for (auto& [ngram, count] : global_histogram) {
-        q.push({count, ngram});
-    }
-
-    // prinit the most common ngrams
-    for (int i = 0; i < 3; i++) {
-        auto [count, ngram] = q.top();
-        q.pop();
-        cout << ngram << ": " << count << endl;
-    }
+    print_histogram(global_histogram);
 }
 

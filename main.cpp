@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <chrono>
 #include "NgramsOfWords.h"
+
 using namespace std;
 
 
@@ -24,7 +25,7 @@ int clean_txt() {
     }
     while (input >> word) {
         string clean_word;
-        for (char c : word) {
+        for (char c: word) {
             if (!ispunct(c)) {
                 clean_word += tolower(c);
             }
@@ -46,8 +47,7 @@ int clean_txt() {
 //    return bigrams;
 //}
 
-    int main()
-{
+int main() {
     //clean_txt();
     NgramsOfWords s(3);
 
@@ -62,7 +62,6 @@ int clean_txt() {
     auto end2 = chrono::high_resolution_clock::now();
     auto elapsed2 = chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2);
     printf("Time measured for parallel version: %.3f seconds.\n\n", elapsed2.count() * 1e-9);
-
 
 
 }

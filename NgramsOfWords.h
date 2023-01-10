@@ -17,8 +17,9 @@ public:
         ngram_length = n;
     };
 
-    void compute_words_ngrams(const string& filename);
-    void parallel_compute_words_ngrams(const string& filename);
+    void compute_words_ngrams(const string &filename);
+
+    void parallel_compute_words_ngrams(const string &filename);
 
 private:
     int ngram_length;

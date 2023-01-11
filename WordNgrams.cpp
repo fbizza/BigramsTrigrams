@@ -1,4 +1,4 @@
-#include "NgramsOfWords.h"
+#include "WordNgrams.h"
 
 void print_histogram(unordered_map<string, int> histogram) {
     string ngram;
@@ -6,22 +6,22 @@ void print_histogram(unordered_map<string, int> histogram) {
 
     //sort the histogram
     priority_queue<pair<int, string>> q;
-    for (auto&[ngram, count]: histogram) {
+    for (auto& [ngram, count]: histogram) {
         q.push({count, ngram});
     }
 
     // prinit the most common ngrams
     for (int i = 0; i < 3; i++) {
-        auto[count, ngram] = q.top();
+        auto [count, ngram] = q.top();
         q.pop();
         cout << ngram << ": " << count << endl;
     }
 }
 
 
-void NgramsOfWords::compute_words_ngrams(const string &filename) {
+void WordNgrams::compute_word_ngrams(const string& filename) {
 
-    cout << "Computing ngrams..." << endl;
+    cout << "Computing word ngrams..." << endl;
     int n = this->ngram_length;
     unordered_map<string, int> histogram;
 
@@ -34,8 +34,8 @@ void NgramsOfWords::compute_words_ngrams(const string &filename) {
     vector<string> previous_words(n - 1);
     int num_words = 0;
     string word;
-    while (file >> word) {   // control for handling the first words of the txt file
-        if (num_words >= n - 1) {
+    while (file >> word) {
+        if (num_words >= n - 1) {   // control for handling the first words of the txt file
             string ngram = "";
             for (int i = 0; i < n - 1; i++) {
                 ngram += previous_words[i] + " ";
@@ -49,20 +49,19 @@ void NgramsOfWords::compute_words_ngrams(const string &filename) {
         previous_words[n - 2] = word;   // access the last element of previous_words vector (of length n-1)
         num_words++;
     }
-
     print_histogram(histogram);
 }
 
 
-void NgramsOfWords::parallel_compute_words_ngrams(const string &filename) {
+void WordNgrams::parallel_compute_word_ngrams(const string& filename) {
 
-    cout << "Computing parallel ngrams..." << endl;
+    cout << "Computing parallel word ngrams..." << endl;
     int n = this->ngram_length;
     unordered_map<string, int> global_histogram;
 
     ifstream file(filename);
     if (!file) {
-        cout << "Error opening file: " << endl;
+        cout << "Error opening input txt file" << endl;
         return;
     }
 
@@ -92,11 +91,11 @@ void NgramsOfWords::parallel_compute_words_ngrams(const string &filename) {
         }
 
 #pragma omp critical
-        for (auto&[ngram, count]: thread_histogram) {
+        for (auto& [ngram, count]: thread_histogram) {
             global_histogram[ngram] += count;
         }
-    }
 
+    }   // end of parallel region
     print_histogram(global_histogram);
 }
 

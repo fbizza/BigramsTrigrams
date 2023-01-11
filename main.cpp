@@ -4,7 +4,8 @@
 #include <cctype>
 #include <unordered_map>
 #include <chrono>
-#include "NgramsOfWords.h"
+#include "WordNgrams.h"
+#include "CharacterNgrams.h"
 
 using namespace std;
 
@@ -39,29 +40,31 @@ int clean_txt() {
     return 0;
 }
 
-//vector<string> extract_bigrams(const string& str) {
-//    vector<string> bigrams;
-//    for (int i = 0; i < str.size() - 1; i++) {
-//        bigrams.push_back(str.substr(i, 2));
-//    }
-//    return bigrams;
-//}
 
 int main() {
-    //clean_txt();
-    NgramsOfWords s(3);
+    clean_txt();
+    WordNgrams s(3);
+    CharacterNgrams c(1);
 
     auto begin = chrono::high_resolution_clock::now();
-    s.compute_words_ngrams("../clean_input.txt");
+    s.compute_word_ngrams("../clean_input.txt");
     auto end = chrono::high_resolution_clock::now();
     auto elapsed = chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
     printf("Time measured for normal version: %.3f seconds.\n\n", elapsed.count() * 1e-9);
 
     auto begin2 = chrono::high_resolution_clock::now();
-    s.parallel_compute_words_ngrams("../clean_input.txt");
+    s.parallel_compute_word_ngrams("../clean_input.txt");
     auto end2 = chrono::high_resolution_clock::now();
     auto elapsed2 = chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2);
     printf("Time measured for parallel version: %.3f seconds.\n\n", elapsed2.count() * 1e-9);
+
+    auto begin3 = chrono::high_resolution_clock::now();
+    c.compute_character_ngrams("../clean_input.txt");
+    auto end3 = chrono::high_resolution_clock::now();
+    auto elapsed3 = chrono::duration_cast<std::chrono::nanoseconds>(end3 - begin3);
+    printf("Time measured for character ngrams: %.3f seconds.\n\n", elapsed3.count() * 1e-9);
+
+
 
 
 }

@@ -14,7 +14,7 @@ using namespace std;
 class CharacterNgrams {
 public:
     CharacterNgrams(int n) {
-        ngram_length = n;
+        NgramLength = n;
     };
 
     void compute_character_ngrams(const string &filename);
@@ -23,8 +23,11 @@ public:
 
     vector<string> extract_ngrams_from_word(const string& str);
 
+    int getNgramLength() const;
+
 private:
-    int ngram_length;
+    int NgramLength;
+
 };
 
 

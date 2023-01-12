@@ -1,4 +1,5 @@
 #include "WordNgrams.h"
+#define NUM_THREADS 16
 
 void print_histogram(unordered_map<string, int> histogram) {
     string ngram;
@@ -22,7 +23,7 @@ void print_histogram(unordered_map<string, int> histogram) {
 void WordNgrams::compute_word_ngrams(const string& filename) {
 
     cout << "Computing word ngrams..." << endl;
-    int n = this->ngram_length;
+    int n = this->NgramLength;
     unordered_map<string, int> histogram;
 
     ifstream file(filename);
@@ -56,7 +57,7 @@ void WordNgrams::compute_word_ngrams(const string& filename) {
 void WordNgrams::parallel_compute_word_ngrams(const string& filename) {
 
     cout << "Computing parallel word ngrams..." << endl;
-    int n = this->ngram_length;
+    int n = this->getNgramLength();
     unordered_map<string, int> global_histogram;
 
     ifstream file(filename);
@@ -75,7 +76,7 @@ void WordNgrams::parallel_compute_word_ngrams(const string& filename) {
 
     int size = words.size();
 
-#pragma omp parallel
+#pragma omp parallel num_threads(NUM_THREADS)
     {
 
         unordered_map<string, int> thread_histogram;
@@ -91,11 +92,15 @@ void WordNgrams::parallel_compute_word_ngrams(const string& filename) {
         }
 
 #pragma omp critical
-        for (auto& [ngram, count]: thread_histogram) {
+        for (auto [ngram, count]: thread_histogram) {
             global_histogram[ngram] += count;
         }
 
     }   // end of parallel region
     print_histogram(global_histogram);
+}
+
+int WordNgrams::getNgramLength() const {
+    return NgramLength;
 }
 

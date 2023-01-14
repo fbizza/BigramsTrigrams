@@ -1,7 +1,6 @@
 #include "CharacterNgrams.h"
 #define NUM_THREADS 16
 
-
 void print_character_histogram(unordered_map<string, int> histogram) {
     string ngram;
     int count;

@@ -86,33 +86,8 @@ void get_average_elapsed_time(CharacterNgrams& c, WordNgrams& w, int n, const st
 
 int main() {
     clean_txt();
-    CharacterNgrams c(3);
-    WordNgrams w(3);
-    get_average_elapsed_time(c, w, 1, "../clean_input.txt");
-
-//
-//    auto begin = chrono::high_resolution_clock::now();
-//    w.compute_word_ngrams("../clean_input.txt");
-//    auto end = chrono::high_resolution_clock::now();
-//    auto elapsed = chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
-//    printf("Time measured for normal version: %.3f seconds.\n\n", elapsed.count() * 1e-9);
-//
-//    auto begin2 = chrono::high_resolution_clock::now();
-//    w.parallel_compute_word_ngrams("../clean_input.txt");
-//    auto end2 = chrono::high_resolution_clock::now();
-//    auto elapsed2 = chrono::duration_cast<std::chrono::nanoseconds>(end2 - begin2);
-//    printf("Time measured for parallel version: %.3f seconds.\n\n", elapsed2.count() * 1e-9);
-//
-//    auto begin3 = chrono::high_resolution_clock::now();
-//    c.compute_character_ngrams("../clean_input.txt");
-//    auto end3 = chrono::high_resolution_clock::now();
-//    auto elapsed3 = chrono::duration_cast<std::chrono::nanoseconds>(end3 - begin3);
-//    printf("Time measured for character ngrams: %.3f seconds.\n\n", elapsed3.count() * 1e-9);
-//
-//    auto begin4 = chrono::high_resolution_clock::now();
-//    c.parallel_compute_character_ngrams("../clean_input.txt");
-//    auto end4 = chrono::high_resolution_clock::now();
-//    auto elapsed4 = chrono::duration_cast<std::chrono::nanoseconds>(end4 - begin4);
-//    printf("Time measured for parallel character ngrams: %.3f seconds.\n\n", elapsed4.count() * 1e-9);
+    CharacterNgrams c(2);
+    WordNgrams w(2);
+    //get_average_elapsed_time(c, w, 7, "../clean_input.txt");
 
 }
